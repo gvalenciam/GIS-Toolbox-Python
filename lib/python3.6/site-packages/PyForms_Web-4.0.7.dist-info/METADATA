@@ -1,0 +1,186 @@
+Metadata-Version: 2.1
+Name: PyForms-Web
+Version: 4.0.7
+Summary: Pyforms Web is Python 3 framework to create single-page web applications.
+Home-page: https://github.com/UmSenhorQualquer/pyforms-web
+Author: Ricardo Ribeiro
+Author-email: ricardojvr@gmail.com
+License: GNU GPLv3
+Keywords: web development single-page-application pyforms
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: Programming Language :: Python :: 3
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: Science/Research
+Classifier: Natural Language :: English
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: Unix
+Classifier: Topic :: Artistic Software
+Classifier: Topic :: Games/Entertainment
+Classifier: Topic :: Multimedia :: Graphics :: 3D Rendering
+Classifier: Topic :: Multimedia :: Graphics :: Capture :: Digital Camera
+Classifier: Topic :: Multimedia :: Graphics :: Presentation
+Classifier: Topic :: Multimedia :: Graphics :: Viewers
+Classifier: Topic :: Multimedia :: Video :: Display
+Classifier: Topic :: Scientific/Engineering :: Human Machine Interfaces
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: Topic :: Software Development :: User Interfaces
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Browsers
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System
+Classifier: Topic :: Internet :: WWW/HTTP :: Site Management
+Classifier: Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Application
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
+Classifier: Topic :: Internet :: WWW/HTTP :: WSGI :: Server
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Widget Sets
+Classifier: Framework :: Django :: 2.0
+Description-Content-Type: text/markdown
+Requires-Dist: django-jfu-pyforms
+Requires-Dist: orquestra
+Requires-Dist: numpy
+Requires-Dist: opencv-python
+Requires-Dist: django (>2.0)
+Requires-Dist: simplejson
+Requires-Dist: sorl-thumbnail
+Requires-Dist: dill
+Requires-Dist: filelock
+Requires-Dist: Pillow
+Requires-Dist: python-dateutil
+Requires-Dist: confapp
+
+![Important](https://img.shields.io/badge/Important-Note-red.svg "Screen")  
+If you find this project useful, please, do not forget to ![star it](https://raw.githubusercontent.com/UmSenhorQualquer/pyforms/v1.0.beta/docs/imgs/start.png?raw=true "Screen") it.
+
+
+# Pyforms Web
+
+Pyforms **Web** is a software layer, part of the Pyforms main library. This layer implements the execution of a Pyforms application in a web browser.
+
+![Diagram](https://raw.githubusercontent.com/UmSenhorQualquer/pyforms-web/v4/docs/source/_static/imgs/pyforms-layers-web.png "Screen")
+
+
+
+# Pyforms
+
+<!-- Posicione esta tag onde você deseja que o widget apareça. -->
+<div class="g-follow" data-annotation="bubble" data-height="24" data-rel="publisher"></div>
+
+Pyforms is a Python 3 cross-enviroment framework that aims the boost the developement productivity. The library provides an API in Python to develop applications that can be executed in Windows GUI mode, Web mode, or in Terminal mode.
+
+[More @ ![Diagram](https://raw.githubusercontent.com/UmSenhorQualquer/pyforms-web/v4/docs/source/_static/imgs/rtd.png)](https://pyforms.readthedocs.io)
+
+## Advantages
+* With a minimal API, interfaces are easily defined using a short Python code.
+* Avoid the constant switching between the GUI designers and the Python IDE.
+* It is designed to allow the coding of advanced functionalities with a minimal effort.
+* The code is organized in modules and prepared to be reused by other applications.
+* It makes the applications maintenance easier.
+* Turn the prototyping much easier and fast.
+* Due to its simplicity it has a low learning curve.
+
+## Installation
+
+Check the documentation at [pyforms.readthedocs.org](http://pyforms.readthedocs.org) and [pyforms-web.readthedocs.org](http://pyforms-web.readthedocs.org)
+
+## Rationale behind the framework
+
+The development of this library started with the necessity of allowing users with low programming skills to edit parameters from my python scripts.
+The idea was to transform scripts which had already been developed into GUI applications with a low effort and in a short time.
+
+For example in my computer vision applications in the majority of the times there were variables that had to be set manually in the scripts for each video, to adjust the thresholds, blobs sizes, and other parameters to the environment light conditions... To test each set of parameters the script had to be executed.
+With GUI applications, users would be able to set the parameters using a GUI interface and visualize the results instantly without the need of restarting the script. That was the idea.
+
+After looking into the several python options for GUI interfaces, PyQt was the one that seemed the best tool for a fast development with the QtDesigner, but after a while developing in Qt, switching between the designer and the python IDE was becoming too costly in terms of time because the interfaces were constantly evolving.
+
+Being a Django developer, I did get inspiration on it for this framework. In the [Django](https://www.djangoproject.com/) Models we just need to define the type of variables and their disposition in the form (in ModelAdmin) to generate a HTML form for data edition.
+For the GUIs that I wanted to build in my python scripts, I would like to have the same simplicity, so I could focus on the algorithms and not on GUIs developing.
+
+
+The result was the simplicity you can see in the example below:
+
+```python
+from pyforms.basewidget import BaseWidget
+from pyforms.controls   import ControlFile
+from pyforms.controls   import ControlText
+from pyforms.controls   import ControlSlider
+from pyforms.controls   import ControlPlayer
+from pyforms.controls   import ControlButton
+
+from confapp import conf
+
+class ComputerVisionAlgorithm(BaseWidget):
+
+    UID = 'cva'
+    TITLE = 'Computer vision algorithm'
+
+    LAYOUT_POSITION = conf.ORQUESTRA_HOME
+
+    ORQUESTRA_MENU = 'left'
+    ORQUESTRA_MENU_ORDER = 10
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('Computer vision algorithm example')
+
+
+        #Definition of the forms fields
+        self._videofile  = ControlFile('Video')
+        self._outputfile = ControlText('Results output file')
+        self._threshold  = ControlSlider('Threshold', 114, 0,255)
+        self._blobsize   = ControlSlider('Minimum blob size', 100, 100,2000)
+        self._player     = ControlPlayer('Player')
+        self._runbutton  = ControlButton('Run')
+
+        #Define the function that will be called when a file is selected
+        self._videofile.changed     = self.__videoFileSelectionEvent
+        #Define the event that will be called when the run button is processed
+        self._runbutton.value       = self.__runEvent
+        #Define the event called before showing the image in the player
+        self._player.process_frame_event    = self.__process_frame
+
+        #Define the organization of the Form Controls
+        self._formset = [
+            ('_videofile', '_outputfile'),
+            '_threshold',
+            ('_blobsize', '_runbutton'),
+            '_player'
+        ]
+
+
+    def __videoFileSelectionEvent(self):
+        """
+        When the videofile is selected instanciate the video in the player
+        """
+        self._player.value = self._videofile.value
+
+    def __process_frame(self, frame):
+        """
+        Do some processing to the frame and return the result frame
+        """
+        return frame
+
+    def __runEvent(self):
+        """
+        After setting the best parameters run the full algorithm
+        """
+        pass
+
+```
+
+Result of the application running in a web browser:
+
+
+![ScreenShot](https://raw.githubusercontent.com/UmSenhorQualquer/pyforms-web/v4/docs/source/_static/imgs/web-example-computervisionalgorithm.png)
+
+

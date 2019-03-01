@@ -1,0 +1,5 @@
+__prog__    = "jfu-pyforms"
+__author__  = "Z. Alem, Ricardo Ribeiro"
+__licence__ = "BSD License"
+__version__ = "2.0.9.1"
+__desc__    = "A Django Library for jQuery File Upload."

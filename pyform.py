@@ -10,6 +10,8 @@ import PIL.Image
 import numpy
 from time import sleep
 
+from shapely.geometry import shape
+
 from kivy.config import Config
 Config.set('graphics', 'resizable', '0')
 Config.set('graphics', 'width', '1200')
@@ -30,6 +32,8 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from functools import partial
 
+import os
+import subprocess
 
 class RiverProcessingLayout(FloatLayout):
 
@@ -52,6 +56,9 @@ class RiverProcessingLayout(FloatLayout):
         screenHeight = Window.height
         popupWidth = 800
         popupHeight = 800
+
+        print(screenWidth)
+        print(screenHeight)
 
         # reclassifySliderNew = Slider()
         # sizeFilterSliderNew = Slider()
@@ -118,6 +125,10 @@ class RiverProcessingLayout(FloatLayout):
             changeWidgetsVisibility(0)
             self.add_widget(fileChooseBox)
 
+            os.system("python shp2centerline.py bcd.shp cleanbcdPolygon.shp 0.002")
+            #os.system("create_centerlines jaimePython.shp jaimeFinal.geojson 0.001")
+            #subprocess.Popen(["create_centerlines", "jaimePython.shp", "jaimeFinal.geojson", "0.01"])
+
         def updateProgressBar10(percentage, *args):
             savingProgressBar.value = percentage
 
@@ -126,7 +137,8 @@ class RiverProcessingLayout(FloatLayout):
 
         def generateJSON(instance):
 
-            for shape, value in rasterio.features.shapes(self.sizeFilteredListInt, transform=self.box, connectivity=8):
+            for shape, value in rasterio.features.shapes(self.sizeFilteredListInt, transform=self.box, connectivity=4):
+                #self.shapeArray.append(shape)
                 if value == 1:
                     self.shapeArray.append(shape)
 
@@ -162,6 +174,8 @@ class RiverProcessingLayout(FloatLayout):
             self.remove_widget(reclassifySlider)
 
             riverImage.source = self.selectedImagePath
+
+
 
             if not self.reclassifySliderCreated:
                 self.reclassifySliderCreated = True
@@ -221,7 +235,8 @@ class RiverProcessingLayout(FloatLayout):
         englishButton.bind(on_press=changeEnglishStrings)
         spanishButton = Button(size=(125, 80), pos=(screenWidth - 125 - 40, titleLabel.y - 20), size_hint=(None, None), color=[0, 0, 0, 0.8], background_normal="spain_flag.png", background_down="spain_flag.png")
         spanishButton.bind(on_press=changeSpanishStrings)
-        riverImage = Image(size=(1000, 800), pos=(120, citaImage.y - citaImage.height - 800 - 50), size_hint=(None, None), source='Amazonas2017.tif')
+        # riverImage = Image(size=(1000, 800), pos=(120, citaImage.y - citaImage.height - 800 - 50), size_hint=(None, None), source='Amazonas2017.tif')
+        riverImage = Image(size=(1000, 800), pos=(120, citaImage.y - citaImage.height - 800 - 50), size_hint=(None, None), source='cita-blanco.png')
         selectImageButton = Button(size=(280, 60), pos=(screenWidth/2, citaImage.y - citaImage.height - 100), size_hint=(None, None), background_normal='', background_color=[1.0, 1.0, 1.0, 0.75], color=[0, 0, 0, 0.8], text=selectImageStringEN)
         selectImageButton.bind(on_press=selectImageCallback)
         fileChooseBox = FloatLayout(size=(screenWidth, screenHeight - 500), pos=(0, 0), size_hint=(None, None))
